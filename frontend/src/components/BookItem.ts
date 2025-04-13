@@ -1,50 +1,118 @@
 import { LitElement, html, css } from "lit";
 import { property, customElement } from "lit/decorators.js";
+import { navigateTo } from "../main";
 
 @customElement("book-item")
 export class BookItem extends LitElement {
     @property({ type: Object }) book: any;
 
     static styles = css`
-        li {
-            list-style: none;
-            border: 1px solid #ddd;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            background: #f9f9f9;
+        :host {
+            display: block;
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+
+        .card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
         }
 
         .title {
-            font-weight: bold;
             font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .author {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
         }
 
         button {
-            margin-top: 0.5rem;
-            background-color: #4caf50;
-            color: white;
+            padding: 0.5rem 0.75rem;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s ease-in-out;
         }
 
-        button:hover {
-            background-color: #45a049;
+        button:first-child {
+            background-color: #e0f0ff;
+            color: #0077cc;
+        }
+
+        button:first-child:hover {
+            background-color: #cce7ff;
+        }
+
+        button:last-child {
+            background-color: #ffe0e0;
+            color: #cc0000;
+        }
+
+        button:last-child:hover {
+            background-color: #ffcccc;
         }
     `;
 
+    async deleteBook() {
+        if (!confirm(`Delete "${this.book.title}"?`)) return;
+
+        try {
+            const res = await fetch(
+                `http://localhost:8000/api/books/${this.book.id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "X-User-ID": "5",
+                        "X-User-Role": "admin",
+                        Accept: "application/json",
+                    },
+                },
+            );
+
+            if (!res.ok) throw new Error(await res.text());
+            this.remove();
+        } catch (err) {
+            console.error("Failed to delete book:", err);
+            alert("Could not delete book.");
+        }
+    }
+
     render() {
         if (!this.book) return html`<p>No book data.</p>`;
+
         return html`
-            <li>
+            <div class="card">
                 <div class="title">${this.book.title}</div>
-                <div>by ${this.book.author}</div>
-                <button @click=${() => console.log("Details clicked")}>
-                    Details
-                </button>
-            </li>
+                <div class="author">by ${this.book.author}</div>
+                <div class="actions">
+                    <button
+                        @click=${() => navigateTo(`/books/${this.book.id}`)}
+                    >
+                        Details
+                    </button>
+                    <button @click=${this.deleteBook}>Delete</button>
+                </div>
+            </div>
         `;
     }
 }
