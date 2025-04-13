@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "lib": ["DOM", "ES2022"],
+        "moduleResolution": "Bundler",
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false,
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "jsx": "preserve",
+        "outDir": "./dist",
+        "allowJs": false,
+        "moduleDetection": "force"
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist"]
+}
