@@ -1,19 +1,10 @@
-// frontend/src/pages/AddBookPage.ts
 import { html } from "lit";
 import { navigateTo } from "../main";
+import "../components/AppHeader";
+import "../components/BookForm";
 
 export async function showAddBookPage() {
-    const handleSubmit = async (e: Event) => {
-        e.preventDefault();
-        const form = e.target as HTMLFormElement;
-        const data = Object.fromEntries(new FormData(form));
-
-        const book = {
-            ...data,
-            user_id: parseInt(data.user_id as string),
-            is_read: data.is_read === "on",
-        };
-
+    const handleSubmit = async (book: any) => {
         try {
             const res = await fetch("http://localhost:8000/api/books", {
                 method: "POST",
@@ -36,21 +27,8 @@ export async function showAddBookPage() {
     };
 
     return html`
-        <h1>Add a New Book</h1>
-        <form @submit=${handleSubmit}>
-            <label>Title: <input name="title" required /></label><br />
-            <label>Author: <input name="author" required /></label><br />
-            <label>Description: <input name="description" required /></label
-            ><br />
-            <label
-                >Published Date:
-                <input name="published_date" type="date" required /></label
-            ><br />
-            <label
-                >User ID: <input name="user_id" type="number" required /></label
-            ><br />
-            <label>Read: <input name="is_read" type="checkbox" /></label><br />
-            <button type="submit">Add Book</button>
-        </form>
+        <app-header></app-header>
+        <h1 style="text-align: center; margin-top: 1rem">Add a New Book</h1>
+        <book-form .onSubmit=${handleSubmit}></book-form>
     `;
 }

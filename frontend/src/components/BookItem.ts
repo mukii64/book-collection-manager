@@ -9,67 +9,66 @@ export class BookItem extends LitElement {
     static styles = css`
         :host {
             display: block;
-            max-width: 600px;
-            margin: 1rem auto;
+            width: 100%;
+            aspect-ratio: 3 / 2;
         }
 
         .card {
             background: #fff;
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-            transition: box-shadow 0.2s ease-in-out;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            justify-content: space-between;
+            overflow: hidden;
         }
 
         .card:hover {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
 
         .title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .author {
-            font-size: 1rem;
-            color: #666;
+            font-size: 0.95rem;
+            color: #777;
+            margin-bottom: auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .actions {
             display: flex;
             justify-content: flex-end;
-            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
         button {
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.75rem;
+            background-color: #f44336;
+            color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
+            font-size: 0.85rem;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.2s ease-in-out;
         }
 
-        button:first-child {
-            background-color: #e0f0ff;
-            color: #0077cc;
-        }
-
-        button:first-child:hover {
-            background-color: #cce7ff;
-        }
-
-        button:last-child {
-            background-color: #ffe0e0;
-            color: #cc0000;
-        }
-
-        button:last-child:hover {
-            background-color: #ffcccc;
+        button:hover {
+            background-color: #d32f2f;
         }
     `;
 
@@ -105,11 +104,6 @@ export class BookItem extends LitElement {
                 <div class="title">${this.book.title}</div>
                 <div class="author">by ${this.book.author}</div>
                 <div class="actions">
-                    <button
-                        @click=${() => navigateTo(`/books/${this.book.id}`)}
-                    >
-                        Details
-                    </button>
                     <button @click=${this.deleteBook}>Delete</button>
                 </div>
             </div>
