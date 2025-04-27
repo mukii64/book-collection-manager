@@ -19,28 +19,38 @@ export function generatePlaceholder(title: string, color?: string): string {
         color || colors[Math.floor(Math.random() * colors.length)];
 
     // Formatting Title to prevent overflow
-
     const maxCharsPerLine = 20;
     const maxLines = 3;
 
-    const splitIntoChunks = (text: string, chunkSize: number): string[] => {
-        const chunks = [];
-        for (let i = 0; i < text.length; i += chunkSize) {
-            chunks.push(text.slice(i, i + chunkSize));
+    const splitIntoLines = (text: string, maxChars: number): string[] => {
+        const words = text.split(" ");
+        const lines: string[] = [];
+        let currentLine = "";
+
+        for (const word of words) {
+            if ((currentLine + word).length <= maxChars) {
+                currentLine += (currentLine ? " " : "") + word;
+            } else {
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                currentLine = word;
+            }
         }
-        return chunks;
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        return lines;
     };
 
-    let lines = splitIntoChunks(title, maxCharsPerLine);
+    let lines = splitIntoLines(title, maxCharsPerLine);
 
     if (lines.length > maxLines) {
         lines = lines.slice(0, maxLines);
-        lines[maxLines - 1] = lines[maxLines - 1].replace(/-$/, "") + "...";
+        lines[maxLines - 1] = lines[maxLines - 1] + "...";
     }
-
-    lines = lines.map((line, index) =>
-        index < lines.length - 1 ? line + "-" : line,
-    );
 
     const lineHeight = 28;
     const startY = 150;
