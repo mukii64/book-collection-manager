@@ -3,6 +3,7 @@ import { navigateTo } from "../main";
 import "../components/BookItem";
 import "../components/AppHeader";
 import "../components/BookFilter";
+import { BooksHelper } from "../utils/BooksHelper";
 
 export async function showAllBooksPage() {
     const userId = parseInt(localStorage.getItem("user_id") || "-1");
@@ -13,68 +14,40 @@ export async function showAllBooksPage() {
         return;
     }
 
+    const booksHelper = new BooksHelper();
     const res = await fetch(`http://localhost:8000/api/books`, {});
-
     const books = await res.json();
     const authors = Array.from(new Set(books.map((book: any) => book.author)));
-
-    let filteredBooks = books;
-    let searchQuery = "";
-    let selectedAuthor = "";
-    let readStatus = "";
-
-    function applyFilters() {
-        filteredBooks = books.filter((book: any) => {
-            const matchesSearch = book.title
-                .toLowerCase()
-                .includes(searchQuery);
-            const matchesAuthor = selectedAuthor
-                ? book.author === selectedAuthor
-                : true;
-            const matchesReadStatus =
-                readStatus === "read"
-                    ? book.is_read
-                    : readStatus === "unread"
-                      ? !book.is_read
-                      : true;
-
-            return matchesSearch && matchesAuthor && matchesReadStatus;
-        });
-        updatePage();
-    }
-
-    function handleSearch(event: CustomEvent) {
-        searchQuery = event.detail.searchQuery.toLowerCase();
-        applyFilters();
-    }
-
-    function handleAuthorFilter(event: CustomEvent) {
-        selectedAuthor = event.detail.selectedAuthor;
-        applyFilters();
-    }
-
-    function handleReadFilter(event: CustomEvent) {
-        readStatus = event.detail.readStatus;
-        applyFilters();
-    }
-
-    function handleBookClick(bookId: string) {
-        navigateTo(`details/${bookId}`);
-    }
+    booksHelper.initializeBooks(books);
 
     function updatePage() {
         const container = document.querySelector(".books-container");
         if (container) {
             container.innerHTML = "";
-            filteredBooks.forEach((book: any) => {
+            booksHelper.getFilteredBooks().forEach((book: any) => {
                 const bookItem = document.createElement("book-item");
                 bookItem.book = book;
                 bookItem.addEventListener("click", () =>
-                    handleBookClick(book.id),
+                    booksHelper.handleBookClick(book.id),
                 );
                 container.appendChild(bookItem);
             });
         }
+    }
+
+    function handleSearch(event: CustomEvent) {
+        booksHelper.handleSearch(event.detail.searchQuery);
+        updatePage();
+    }
+
+    function handleAuthorFilter(event: CustomEvent) {
+        booksHelper.handleAuthorFilter(event.detail.selectedAuthor);
+        updatePage();
+    }
+
+    function handleReadFilter(event: CustomEvent) {
+        booksHelper.handleReadFilter(event.detail.readStatus);
+        updatePage();
     }
 
     return html`
@@ -104,14 +77,16 @@ export async function showAllBooksPage() {
             @filter-read=${handleReadFilter}
         ></book-filter>
         <div class="books-container">
-            ${filteredBooks.map(
-                (book: any) => html`
-                    <book-item
-                        .book=${book}
-                        @click=${() => handleBookClick(book.id)}
-                    ></book-item>
-                `,
-            )}
+            ${booksHelper
+                .getFilteredBooks()
+                .map(
+                    (book: any) => html`
+                        <book-item
+                            .book=${book}
+                            @click=${() => booksHelper.handleBookClick(book.id)}
+                        ></book-item>
+                    `,
+                )}
         </div>
     `;
 }

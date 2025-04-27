@@ -3,7 +3,7 @@ import { LitElement, html, css } from "lit";
 export class StatusBadge extends LitElement {
     static properties = {
         isRead: { type: Boolean },
-        showBadge: { type: Boolean }, // New property to control visibility
+        showBadge: { type: Boolean },
     };
 
     static styles = css`

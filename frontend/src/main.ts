@@ -8,7 +8,7 @@ import { showAllBooksPage } from "./pages/AllBooksPage";
 import { showEditPage } from "./pages/EditPage";
 import { render } from "lit";
 
-export async function navigateTo(route: string) {
+export async function navigateTo(route: string, addToHistory = true) {
     const root = document.getElementById("app")!;
     const userId = localStorage.getItem("user_id");
 
@@ -39,5 +39,15 @@ export async function navigateTo(route: string) {
     }
 
     render(page, root);
+
+    if (addToHistory) {
+        history.pushState({ route }, "", `/${route}`);
+    }
 }
+
+window.addEventListener("popstate", (event) => {
+    const route = event.state?.route || "books";
+    navigateTo(route, false);
+});
+
 navigateTo("books");
