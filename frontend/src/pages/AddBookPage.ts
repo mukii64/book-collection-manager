@@ -2,18 +2,15 @@ import { html } from "lit";
 import { navigateTo } from "../main";
 import "../components/AppHeader";
 import "../components/BookForm";
+import { apiFetch } from "../utils/apiFetch";
 
 export async function showAddBookPage() {
+    const isAdmin = localStorage.getItem("is_admin") === "true";
+
     const handleSubmit = async (book: any) => {
         try {
-            const res = await fetch("http://localhost:8000/api/books", {
+            const res = await apiFetch("http://localhost:8000/api/books", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "X-User-ID": book.user_id.toString(),
-                    "X-User-Role": "admin",
-                },
                 body: JSON.stringify(book),
             });
 
@@ -29,6 +26,6 @@ export async function showAddBookPage() {
     return html`
         <app-header></app-header>
         <h1 style="text-align: center; margin-top: 1rem">Add a New Book</h1>
-        <book-form .onSubmit=${handleSubmit}></book-form>
+        <book-form .onSubmit=${handleSubmit} .isAdmin=${isAdmin}></book-form>
     `;
 }

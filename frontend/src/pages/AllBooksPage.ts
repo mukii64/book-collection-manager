@@ -1,11 +1,10 @@
 import { html, css } from "lit";
-import { navigateTo } from "../main"; // Assuming this is your page router
-import "../components/BookItem"; // Assuming this is your book component
+import { navigateTo } from "../main";
+import "../components/BookItem";
 import "../components/AppHeader";
 import "../components/BookFilter";
-import { apiFetch } from "../utils/apiFetch";
 
-export async function showBooksPage() {
+export async function showAllBooksPage() {
     const userId = parseInt(localStorage.getItem("user_id") || "-1");
 
     if (!userId) {
@@ -14,10 +13,10 @@ export async function showBooksPage() {
         return;
     }
 
-    const res = await apiFetch("http://localhost:8000/api/books");
+    const res = await fetch(`http://localhost:8000/api/books`, {});
 
     const books = await res.json();
-    const authors = Array.from(new Set(books.map((book: any) => book.author))); // Extract unique authors
+    const authors = Array.from(new Set(books.map((book: any) => book.author)));
 
     let filteredBooks = books;
     let searchQuery = "";
@@ -28,7 +27,7 @@ export async function showBooksPage() {
         filteredBooks = books.filter((book: any) => {
             const matchesSearch = book.title
                 .toLowerCase()
-                .includes(searchQuery); // Check the title instead of the author
+                .includes(searchQuery);
             const matchesAuthor = selectedAuthor
                 ? book.author === selectedAuthor
                 : true;
@@ -73,7 +72,7 @@ export async function showBooksPage() {
                 bookItem.book = book;
                 bookItem.addEventListener("click", () =>
                     handleBookClick(book.id),
-                );
+                ); // Adding click event listener
                 container.appendChild(bookItem);
             });
         }
@@ -98,7 +97,7 @@ export async function showBooksPage() {
             }
         </style>
         <app-header></app-header>
-        <h1>My Library</h1>
+        <h1>All Books</h1>
         <book-filter
             .authors=${authors}
             @search=${handleSearch}

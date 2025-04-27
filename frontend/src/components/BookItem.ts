@@ -1,6 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import { navigateTo } from "../main";
+import "../components/StatusBadge"; // Import the StatusBadge component
+import { generatePlaceholder } from "../utils/placeholder"; // Import the placeholder utility
 
 @customElement("book-item")
 export class BookItem extends LitElement {
@@ -14,8 +15,9 @@ export class BookItem extends LitElement {
         }
 
         .card {
-            background: #fff;
-            padding: 1.25rem;
+            position: relative;
+            background-size: cover; /* Use the book cover as the background */
+            background-position: center;
             border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
             transition:
@@ -24,8 +26,11 @@ export class BookItem extends LitElement {
             height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-end; /* Align content to the bottom */
             overflow: hidden;
+            padding: 1rem;
+            color: white; /* Ensure text is readable on the background */
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); /* Add text shadow for readability */
         }
 
         .card:hover {
@@ -36,7 +41,6 @@ export class BookItem extends LitElement {
         .title {
             font-size: 1.15rem;
             font-weight: 600;
-            color: #222;
             margin-bottom: 0.5rem;
             word-wrap: break-word;
             overflow: hidden;
@@ -45,67 +49,41 @@ export class BookItem extends LitElement {
 
         .author {
             font-size: 0.95rem;
-            color: #777;
-            margin-bottom: auto;
+            margin-bottom: 0.5rem;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-        }
-
-        button {
-            padding: 0.4rem 0.75rem;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #d32f2f;
+        .badge-container {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            z-index: 1;
         }
     `;
-
-    async deleteBook() {
-        if (!confirm(`Delete "${this.book.title}"?`)) return;
-
-        try {
-            const res = await fetch(
-                `http://localhost:8000/api/books/${this.book.id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "X-User-ID": "5",
-                        "X-User-Role": "admin",
-                        Accept: "application/json",
-                    },
-                },
-            );
-
-            if (!res.ok) throw new Error(await res.text());
-            this.remove();
-        } catch (err) {
-            console.error("Failed to delete book:", err);
-            alert("Could not delete book.");
-        }
-    }
 
     render() {
         if (!this.book) return html`<p>No book data.</p>`;
 
+        // Use the book's cover URL or generate a placeholder
+        const coverUrl =
+            this.book.coverUrl || generatePlaceholder(this.book.title);
+
+        // Check if the current user is the one who added the book
+        const currentUserId = parseInt(localStorage.getItem("user_id") || "-1");
+        const isCurrentUser = this.book.user_id === currentUserId;
+
         return html`
-            <div class="card">
+            <div class="card" style="background-image: url('${coverUrl}');">
+                <!-- Badge positioned at the top-right -->
+                <div class="badge-container">
+                    <status-badge
+                        .isRead=${this.book.is_read}
+                        .showBadge=${isCurrentUser} <!-- Only show if current user -->
+                    ></status-badge>
+                </div>
                 <div class="title">${this.book.title}</div>
                 <div class="author">by ${this.book.author}</div>
-                <div class="actions">
-                    <button @click=${this.deleteBook}>Delete</button>
-                </div>
             </div>
         `;
     }

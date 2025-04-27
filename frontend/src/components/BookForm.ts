@@ -60,6 +60,7 @@ export class BookForm extends LitElement {
 
     @property({ type: Object }) initialData: any = {};
     @property({ type: Function }) onSubmit: Function = () => {};
+    @property({ type: Boolean }) isAdmin: boolean = false; // New property to check if the user is an admin
 
     render() {
         // Retrieve the current user ID from localStorage
@@ -102,11 +103,27 @@ ${this.initialData.description || ""}</textarea
                         />
                     </label>
                     <!-- Hidden input for user ID -->
-                    <input
-                        name="user_id"
-                        type="hidden"
-                        .value=${currentUserId || ""}
-                    />
+                    ${this.isAdmin
+                        ? html`
+                              <label>
+                                  User ID:
+                                  <input
+                                      name="user_id"
+                                      type="number"
+                                      required
+                                      .value=${this.initialData.user_id ||
+                                      currentUserId ||
+                                      ""}
+                                  />
+                              </label>
+                          `
+                        : html`
+                              <input
+                                  name="user_id"
+                                  type="hidden"
+                                  .value=${currentUserId || ""}
+                              />
+                          `}
                     <label>
                         Read:
                         <input
