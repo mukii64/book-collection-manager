@@ -35,7 +35,7 @@ export class AppHeader extends LitElement {
             align-items: center;
             gap: 0.5rem;
             cursor: pointer;
-            color: #4a90e2; /* Pastel blue for the title */
+            color: #4a90e2;
         }
 
         h1 span {
@@ -45,7 +45,7 @@ export class AppHeader extends LitElement {
         .user-info {
             font-size: 1rem;
             font-weight: 500;
-            color: #777; /* Subtle text color */
+            color: #777;
         }
 
         nav {
@@ -57,27 +57,27 @@ export class AppHeader extends LitElement {
         a {
             padding: 0.5rem 1rem;
             text-decoration: none;
-            color: #4a90e2; /* Pastel blue for links */
+            color: #4a90e2;
             font-size: 1rem;
             font-weight: 500;
             transition:
                 background-color 0.3s ease,
                 color 0.3s ease;
             cursor: pointer;
-            border-radius: 8px; /* Rounded corners for links */
+            border-radius: 8px;
         }
 
         a:hover {
-            background-color: #e3f2fd; /* Light blue hover effect */
-            color: #357ab7; /* Slightly darker blue on hover */
+            background-color: #e3f2fd;
+            color: #357ab7;
         }
 
         .cta-button {
             padding: 0.5rem 1rem;
-            background-color: #ffccbc; /* Pastel coral for the button */
-            color: #333; /* Darker text for contrast */
+            background-color: #ffccbc;
+            color: #333;
             border: none;
-            border-radius: 8px; /* Rounded corners */
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -87,14 +87,14 @@ export class AppHeader extends LitElement {
         }
 
         .cta-button:hover {
-            background-color: #ffab91; /* Slightly darker coral on hover */
-            transform: translateY(-2px); /* Subtle lift effect */
+            background-color: #ffab91;
+            transform: translateY(-2px); /
         }
     `;
 
     render() {
         const userId = localStorage.getItem("user_id");
-        const isAdmin = localStorage.getItem("is_admin") === "true"; // Check if the user is an admin
+        const isAdmin = localStorage.getItem("is_admin") === "true";
 
         return html`
             <header>

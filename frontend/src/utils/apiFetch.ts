@@ -5,19 +5,33 @@ export async function apiFetch(
     const userId = localStorage.getItem("user_id");
     const isAdmin = localStorage.getItem("is_admin") === "true";
 
-    // Default headers
     const defaultHeaders = {
         "Content-Type": "application/json",
         "X-User-ID": userId || "",
         "X-User-Role": isAdmin ? "admin" : "user",
     };
 
-    // Merge default headers with any headers passed in options
     const headers = {
         ...defaultHeaders,
         ...options.headers,
     };
 
-    // Return the fetch call with merged headers and options
-    return fetch(url, { ...options, headers });
+    try {
+        const response = await fetch(url, { ...options, headers });
+
+        if (!response.ok) {
+            const errorDetails = await response.json().catch(() => null);
+            const errorMessage = errorDetails?.message || response.statusText;
+
+            throw new Error(
+                `API request failed with status ${response.status}: ${errorMessage}`,
+            );
+        }
+
+        return response;
+    } catch (error) {
+        console.error("Error in apiFetch:", error);
+
+        throw error;
+    }
 }

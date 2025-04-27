@@ -59,7 +59,6 @@ export async function showAllBooksPage() {
     }
 
     function handleBookClick(bookId: string) {
-        // Navigate to the book's details page
         navigateTo(`details/${bookId}`);
     }
 
@@ -72,7 +71,7 @@ export async function showAllBooksPage() {
                 bookItem.book = book;
                 bookItem.addEventListener("click", () =>
                     handleBookClick(book.id),
-                ); // Adding click event listener
+                );
                 container.appendChild(bookItem);
             });
         }

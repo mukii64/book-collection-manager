@@ -9,6 +9,14 @@ const styles = css`
         height: 100%;
     }
 
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+    }
+
     .login-container {
         display: grid;
         grid-template-columns: 1fr 1fr;

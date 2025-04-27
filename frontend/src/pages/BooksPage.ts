@@ -1,6 +1,6 @@
 import { html, css } from "lit";
-import { navigateTo } from "../main"; // Assuming this is your page router
-import "../components/BookItem"; // Assuming this is your book component
+import { navigateTo } from "../main";
+import "../components/BookItem";
 import "../components/AppHeader";
 import "../components/BookFilter";
 import { apiFetch } from "../utils/apiFetch";
@@ -17,7 +17,7 @@ export async function showBooksPage() {
     const res = await apiFetch("http://localhost:8000/api/books");
 
     const books = await res.json();
-    const authors = Array.from(new Set(books.map((book: any) => book.author))); // Extract unique authors
+    const authors = Array.from(new Set(books.map((book: any) => book.author)));
 
     let filteredBooks = books;
     let searchQuery = "";
@@ -28,7 +28,7 @@ export async function showBooksPage() {
         filteredBooks = books.filter((book: any) => {
             const matchesSearch = book.title
                 .toLowerCase()
-                .includes(searchQuery); // Check the title instead of the author
+                .includes(searchQuery);
             const matchesAuthor = selectedAuthor
                 ? book.author === selectedAuthor
                 : true;
@@ -60,7 +60,6 @@ export async function showBooksPage() {
     }
 
     function handleBookClick(bookId: string) {
-        // Navigate to the book's details page
         navigateTo(`details/${bookId}`);
     }
 

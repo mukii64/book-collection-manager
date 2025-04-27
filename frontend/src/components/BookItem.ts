@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import "../components/StatusBadge"; // Import the StatusBadge component
-import { generatePlaceholder } from "../utils/placeholder"; // Import the placeholder utility
+import "../components/StatusBadge";
+import { generatePlaceholder } from "../utils/placeholder";
 
 @customElement("book-item")
 export class BookItem extends LitElement {
@@ -16,7 +16,7 @@ export class BookItem extends LitElement {
 
         .card {
             position: relative;
-            background-size: cover; /* Use the book cover as the background */
+            background-size: cover;
             background-position: center;
             border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
@@ -26,11 +26,11 @@ export class BookItem extends LitElement {
             height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* Align content to the bottom */
+            justify-content: flex-end;
             overflow: hidden;
             padding: 1rem;
-            color: white; /* Ensure text is readable on the background */
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); /* Add text shadow for readability */
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .card:hover {
@@ -45,6 +45,9 @@ export class BookItem extends LitElement {
             word-wrap: break-word;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .author {
@@ -65,21 +68,18 @@ export class BookItem extends LitElement {
     render() {
         if (!this.book) return html`<p>No book data.</p>`;
 
-        // Use the book's cover URL or generate a placeholder
         const coverUrl =
             this.book.coverUrl || generatePlaceholder(this.book.title);
 
-        // Check if the current user is the one who added the book
         const currentUserId = parseInt(localStorage.getItem("user_id") || "-1");
         const isCurrentUser = this.book.user_id === currentUserId;
 
         return html`
             <div class="card" style="background-image: url('${coverUrl}');">
-                <!-- Badge positioned at the top-right -->
                 <div class="badge-container">
                     <status-badge
                         .isRead=${this.book.is_read}
-                        .showBadge=${isCurrentUser} <!-- Only show if current user -->
+                        .showBadge=${isCurrentUser}
                     ></status-badge>
                 </div>
                 <div class="title">${this.book.title}</div>

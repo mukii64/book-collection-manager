@@ -16,6 +16,8 @@ const styles = css`
         font-size: 2.5rem;
         color: #4a90e2;
         margin-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .author {
@@ -23,6 +25,8 @@ const styles = css`
         font-size: 1.2rem;
         color: #666;
         margin-bottom: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .book-details-container {
@@ -32,6 +36,9 @@ const styles = css`
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         max-width: 800px;
         margin: 4rem auto;
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     p {
@@ -39,6 +46,8 @@ const styles = css`
         color: #333;
         line-height: 1.6;
         margin-bottom: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .status-badge {
@@ -49,6 +58,8 @@ const styles = css`
         font-weight: bold;
         color: white;
         margin-bottom: 20px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .button-container {
@@ -66,6 +77,8 @@ const styles = css`
         cursor: pointer;
         font-size: 1.1rem;
         transition: background-color 0.3s ease;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     button:hover {

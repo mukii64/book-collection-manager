@@ -26,7 +26,6 @@ export class StatusBadge extends LitElement {
     `;
 
     render() {
-        // Only render the badge if showBadge is true
         if (!this.showBadge) return null;
 
         return html`

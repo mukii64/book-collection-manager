@@ -60,10 +60,9 @@ export class BookForm extends LitElement {
 
     @property({ type: Object }) initialData: any = {};
     @property({ type: Function }) onSubmit: Function = () => {};
-    @property({ type: Boolean }) isAdmin: boolean = false; // New property to check if the user is an admin
+    @property({ type: Boolean }) isAdmin: boolean = false;
 
     render() {
-        // Retrieve the current user ID from localStorage
         const currentUserId = localStorage.getItem("user_id");
 
         return html`
