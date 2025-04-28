@@ -4,9 +4,8 @@ import "../components/BookItem";
 import "../components/AppHeader";
 import "../components/BookFilter";
 import { BooksHelper } from "../utils/BooksHelper";
-import { apiFetch } from "../utils/apiFetch";
 
-export async function showBooksPage() {
+export async function showAllBooksPage() {
     const userId = parseInt(localStorage.getItem("user_id") || "-1");
 
     if (!userId) {
@@ -16,11 +15,9 @@ export async function showBooksPage() {
     }
 
     const booksHelper = new BooksHelper();
-
-    const res = await apiFetch("http://localhost:8000/api/books");
+    const res = await fetch(`http://localhost:8000/api/books`, {});
     const books = await res.json();
     const authors = Array.from(new Set(books.map((book: any) => book.author)));
-
     booksHelper.initializeBooks(books);
 
     function updatePage() {
@@ -72,7 +69,7 @@ export async function showBooksPage() {
             }
         </style>
         <app-header></app-header>
-        <h1>My Library</h1>
+        <h1>All Books</h1>
         <book-filter
             .authors=${authors}
             @search=${handleSearch}

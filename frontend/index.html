@@ -3,6 +3,36 @@
     <head>
         <meta charset="UTF-8" />
         <title>Book Collection Manager</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #f0f4ff, #faf0ff);
+                background-size: 200% 200%;
+                animation: gradientMove 10s ease infinite;
+                height: 100vh;
+                font-family: "Inter", "Poppins", "Arial", sans-serif;
+                color: #333;
+            }
+
+            #app {
+                height: 100%;
+                max-width: 1600px;
+                margin: 0 auto;
+            }
+
+            @keyframes gradientMove {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+        </style>
     </head>
     <body>
         <main id="app"></main>

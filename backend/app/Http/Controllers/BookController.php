@@ -9,7 +9,6 @@ class BookController extends Controller
 {
     // GET /api/books
 
-
     /**
      * List all books or filter by user.
      *
@@ -27,19 +26,19 @@ class BookController extends Controller
      */
     public function index(Request $request)
     {
-        $userIdFromHeader = $request->header('X-User-ID');
-        $queryUserId = $request->query('user_id');
+        $queryUserId = $request->query("user_id");
+        $userIdFromHeader = $request->header("X-User-ID");
 
         if ($queryUserId) {
-            $books = Book::where('user_id', $queryUserId)->get();
+            $books = Book::where("user_id", $queryUserId)->get();
+        } elseif ($userIdFromHeader) {
+            $books = Book::where("user_id", $userIdFromHeader)->get();
         } else {
             $books = Book::all();
         }
 
         return response()->json($books);
     }
-
-
 
     // GET /api/books/{id}
     /**
@@ -59,7 +58,6 @@ class BookController extends Controller
     {
         return response()->json(Book::findOrFail($id));
     }
-
 
     // POST /api/books
     /**
@@ -84,30 +82,34 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        $userIdFromHeader = $request->header('X-User-ID');
-        $role = $request->header('X-User-Role', 'user'); // default fallback: user
-
+        $userIdFromHeader = $request->header("X-User-ID");
+        $role = $request->header("X-User-Role", "user"); // default fallback: user
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'published_date' => 'nullable|date',
-            'user_id' => 'required|integer',
-            'is_read' => 'nullable|boolean',
+            "title" => "required|string|max:255",
+            "author" => "nullable|string|max:255",
+            "description" => "nullable|string",
+            "published_date" => "nullable|date",
+            "user_id" => "required|integer",
+            "is_read" => "nullable|boolean",
         ]);
 
-        if ($role === 'user' && (string)$validated['user_id'] !== (string)$userIdFromHeader) {
-            return response()->json(['error' => 'Users can only add books to their own collection.'], 403);
+        if (
+            $role === "user" &&
+            (string) $validated["user_id"] !== (string) $userIdFromHeader
+        ) {
+            return response()->json(
+                [
+                    "error" =>
+                        "Users can only add books to their own collection.",
+                ],
+                403
+            );
         }
 
         $book = Book::create($validated);
         return response()->json($book, 201);
     }
-
-
-
-
 
     // PUT /api/books/{id}
     /**
@@ -132,23 +134,28 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userIdFromHeader = $request->header('X-User-ID');
-        $role = $request->header('X-User-Role', 'user'); // default fallback: user
-
+        $userIdFromHeader = $request->header("X-User-ID");
+        $role = $request->header("X-User-Role", "user"); // default fallback: user
 
         $book = Book::findOrFail($id);
 
-        if ($role === 'user' && (string)$book->user_id !== (string)$userIdFromHeader) {
-            return response()->json(['error' => 'Users can only update their own books.'], 403);
+        if (
+            $role === "user" &&
+            (string) $book->user_id !== (string) $userIdFromHeader
+        ) {
+            return response()->json(
+                ["error" => "Users can only update their own books."],
+                403
+            );
         }
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'published_date' => 'nullable|date',
-            'user_id' => 'nullable|integer',
-            'is_read' => 'nullable|boolean',
+            "title" => "required|string|max:255",
+            "author" => "nullable|string|max:255",
+            "description" => "nullable|string",
+            "published_date" => "nullable|date",
+            "user_id" => "nullable|integer",
+            "is_read" => "nullable|boolean",
         ]);
 
         $book->update($validated);
@@ -169,20 +176,24 @@ class BookController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $userIdFromHeader = $request->header('X-User-ID');
-        $role = $request->header('X-User-Role', 'user'); // default fallback: user
-
+        $userIdFromHeader = $request->header("X-User-ID");
+        $role = $request->header("X-User-Role", "user"); // default fallback: user
 
         $book = Book::findOrFail($id);
 
-        if ($role === 'user' && (string)$book->user_id !== (string)$userIdFromHeader) {
-            return response()->json(['error' => 'Users can only delete their own books.'], 403);
+        if (
+            $role === "user" &&
+            (string) $book->user_id !== (string) $userIdFromHeader
+        ) {
+            return response()->json(
+                ["error" => "Users can only delete their own books."],
+                403
+            );
         }
 
         $book->delete();
         return response()->json(null, 204);
     }
-
 
     /**
      * Toggle read/unread status.
@@ -202,24 +213,27 @@ class BookController extends Controller
      */
     public function toggleRead(Request $request, $id)
     {
-        $userIdFromHeader = $request->header('X-User-ID');
-        $role = $request->header('X-User-Role', 'user'); // Default: user
+        $userIdFromHeader = $request->header("X-User-ID");
+        $role = $request->header("X-User-Role", "user"); // Default: user
 
         $book = Book::findOrFail($id);
 
-        if ($role === 'user' && (string)$book->user_id !== (string)$userIdFromHeader) {
-            return response()->json(['error' => 'Users can only modify their own books.'], 403);
+        if (
+            $role === "user" &&
+            (string) $book->user_id !== (string) $userIdFromHeader
+        ) {
+            return response()->json(
+                ["error" => "Users can only modify their own books."],
+                403
+            );
         }
 
         $book->is_read = !$book->is_read;
         $book->save();
 
         return response()->json([
-            'message' => 'Read/unread status toggled.',
-            'book' => $book,
+            "message" => "Read/unread status toggled.",
+            "book" => $book,
         ]);
     }
-
-
-
 }
