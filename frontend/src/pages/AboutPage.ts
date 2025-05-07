@@ -1,4 +1,5 @@
 import { html, css } from "lit";
+import { navigateTo } from "../main";
 import "../components/AppHeader";
 
 const styles = css`
@@ -41,6 +42,9 @@ export async function showAboutPage() {
         <app-header></app-header>
         <div class="about-container">
             <h1>Book Collection Manager</h1>
+            ${ localStorage.getItem("user_role") === "admin" 
+                ? html`<p><a href="#" @click=${() => navigateTo("admin-users")}>Admin Panel</a></p>` 
+                : "" }
             <p>
                 This is a small SPA Webapp developed for the PR Service
                 Engineering at JKU University.

@@ -82,29 +82,28 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        $userIdFromHeader = $request->header("X-User-ID");
-        $role = $request->header("X-User-Role", "user"); // default fallback: user
-
-        $validated = $request->validate([
-            "title" => "required|string|max:255",
-            "author" => "nullable|string|max:255",
-            "description" => "nullable|string",
-            "published_date" => "nullable|date",
-            "user_id" => "required|integer",
-            "is_read" => "nullable|boolean",
-        ]);
-
-        if (
-            $role === "user" &&
-            (string) $validated["user_id"] !== (string) $userIdFromHeader
-        ) {
-            return response()->json(
-                [
-                    "error" =>
-                        "Users can only add books to their own collection.",
-                ],
-                403
-            );
+        $currentUser = $request->user();
+        if (!$currentUser) {
+            return response()->json(["error" => "Unauthenticated."], 401);
+        }
+        if ($currentUser->role === "user") {
+            $validated = $request->validate([
+                "title" => "required|string|max:255",
+                "author" => "nullable|string|max:255",
+                "description" => "nullable|string",
+                "published_date" => "nullable|date",
+                "is_read" => "nullable|boolean",
+            ]);
+            $validated["user_id"] = $currentUser->id;
+        } else {
+            $validated = $request->validate([
+                "title" => "required|string|max:255",
+                "author" => "nullable|string|max:255",
+                "description" => "nullable|string",
+                "published_date" => "nullable|date",
+                "user_id" => "required|integer",
+                "is_read" => "nullable|boolean",
+            ]);
         }
 
         $book = Book::create($validated);
@@ -134,15 +133,13 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userIdFromHeader = $request->header("X-User-ID");
-        $role = $request->header("X-User-Role", "user"); // default fallback: user
-
+        $currentUser = $request->user();
+        if (!$currentUser) {
+            return response()->json(["error" => "Unauthenticated."], 401);
+        }
         $book = Book::findOrFail($id);
 
-        if (
-            $role === "user" &&
-            (string) $book->user_id !== (string) $userIdFromHeader
-        ) {
+        if ($currentUser->role === "user" && (string) $book->user_id !== (string) $currentUser->id) {
             return response()->json(
                 ["error" => "Users can only update their own books."],
                 403
@@ -157,7 +154,9 @@ class BookController extends Controller
             "user_id" => "nullable|integer",
             "is_read" => "nullable|boolean",
         ]);
-
+        if ($currentUser->role === "user") {
+            $validated["user_id"] = $currentUser->id;
+        }
         $book->update($validated);
         return response()->json($book);
     }
@@ -176,15 +175,13 @@ class BookController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $userIdFromHeader = $request->header("X-User-ID");
-        $role = $request->header("X-User-Role", "user"); // default fallback: user
-
+        $currentUser = $request->user();
+        if (!$currentUser) {
+            return response()->json(["error" => "Unauthenticated."], 401);
+        }
         $book = Book::findOrFail($id);
 
-        if (
-            $role === "user" &&
-            (string) $book->user_id !== (string) $userIdFromHeader
-        ) {
+        if ($currentUser->role === "user" && (string) $book->user_id !== (string) $currentUser->id) {
             return response()->json(
                 ["error" => "Users can only delete their own books."],
                 403
@@ -213,15 +210,13 @@ class BookController extends Controller
      */
     public function toggleRead(Request $request, $id)
     {
-        $userIdFromHeader = $request->header("X-User-ID");
-        $role = $request->header("X-User-Role", "user"); // Default: user
-
+        $currentUser = $request->user();
+        if (!$currentUser) {
+            return response()->json(["error" => "Unauthenticated."], 401);
+        }
         $book = Book::findOrFail($id);
 
-        if (
-            $role === "user" &&
-            (string) $book->user_id !== (string) $userIdFromHeader
-        ) {
+        if ($currentUser->role === "user" && (string) $book->user_id !== (string) $currentUser->id) {
             return response()->json(
                 ["error" => "Users can only modify their own books."],
                 403

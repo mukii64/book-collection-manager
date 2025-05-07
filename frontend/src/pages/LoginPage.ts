@@ -137,19 +137,29 @@ export async function showLoginPage() {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
 
-        const userId = (
-            form.querySelector('input[name="user_id"]') as HTMLInputElement
-        ).value;
+        const email = (form.querySelector('input[name="email"]') as HTMLInputElement).value;
+        const password = (form.querySelector('input[name="password"]') as HTMLInputElement).value;
 
-        const isAdmin = (
-            form.querySelector('input[name="is_admin"]') as HTMLInputElement
-        ).checked;
-
-        localStorage.setItem("user_id", userId);
-        localStorage.setItem("is_admin", isAdmin ? "true" : "false");
-
-        // Redirect to the books page
-        navigateTo("books");
+        fetch("http://localhost:8000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user_id", data.user.id);
+                localStorage.setItem("user_role", data.user.role);
+                navigateTo("books");
+            } else {
+                alert("Login failed: " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("An error occurred during login.");
+        });
     };
 
     return html`
@@ -165,12 +175,12 @@ export async function showLoginPage() {
                 <form @submit=${handleLoginSubmit}>
                     <h1>Login</h1>
                     <label>
-                        Enter Your User ID:
-                        <input name="user_id" type="number" min="1" required />
+                        Email:
+                        <input name="email" type="email" placeholder="Email" required />
                     </label>
                     <label>
-                        <input name="is_admin" type="checkbox" />
-                        Log in as Admin
+                        Password:
+                        <input name="password" type="password" placeholder="Password" required />
                     </label>
                     <button type="submit">Login</button>
                 </form>

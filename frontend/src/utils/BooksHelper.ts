@@ -6,6 +6,12 @@ export class BooksHelper {
     private searchQuery: string = "";
     private selectedAuthor: string = "";
     private readStatus: string = "";
+    private myLibrary: boolean = false;
+
+    setMyLibrary(flag: boolean) {
+        this.myLibrary = flag;
+        this.applyFilters();
+    }
 
     initializeBooks(books: any[]) {
         this.books = books;
@@ -30,7 +36,9 @@ export class BooksHelper {
                       ? !book.is_read
                       : true;
 
-            return matchesSearch && matchesAuthor && matchesReadStatus;
+            const currentUserId = parseInt(localStorage.getItem("user_id") || "-1");
+            const matchesMyLibrary = this.myLibrary ? (book.user_id === currentUserId) : true;
+            return matchesSearch && matchesAuthor && matchesReadStatus && matchesMyLibrary;
         });
     }
 

@@ -2,14 +2,15 @@ export async function apiFetch(
     url: string,
     options: RequestInit = {},
 ): Promise<Response> {
-    const userId = localStorage.getItem("user_id");
-    const isAdmin = localStorage.getItem("is_admin") === "true";
+    const token = localStorage.getItem("token");
 
-    const defaultHeaders = {
+    const defaultHeaders: HeadersInit = {
         "Content-Type": "application/json",
-        "X-User-ID": userId || "",
-        "X-User-Role": isAdmin ? "admin" : "user",
     };
+
+    if (token) {
+        defaultHeaders["Authorization"] = `Bearer ${token}`;
+    }
 
     const headers = {
         ...defaultHeaders,

@@ -13,8 +13,18 @@ export async function navigateTo(route: string, addToHistory = true) {
     const userId = localStorage.getItem("user_id");
 
     let page;
-
-    if (route === "books") {
+    if (route === "admin-users") {
+        if (localStorage.getItem("user_role") === "admin") {
+            const module = await import("./pages/AdminUserPage");
+            page = await module.showAdminUserPage();
+        } else {
+            if (!userId) {
+                page = await showLoginPage();
+            } else {
+                page = await showBooksPage();
+            }
+        }
+    } else if (route === "books") {
         if (!userId) {
             page = await showLoginPage();
         } else {
